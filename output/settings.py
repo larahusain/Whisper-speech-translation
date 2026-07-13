@@ -5,7 +5,11 @@
 # 2. Except for "pred_before" and "pred_after", 
 # other columns in the files are from original fleur dataset.
 
-# 3. Both fine-tuned models were trained with the following parameters.
+# 3. Cantonese model whisper-small-yue is trained using language code chinese.
+# Azerbaijani model  whisper-small-az is trained using language code turkish 
+# (this might not be the best option since whisper have an "azerbaijani" language code as well).
+
+# 4. Both fine-tuned models were trained with the following parameters.
 # Both model trainings stopped at steps=300, due to limit of GPU resource.
 
 training_args = Seq2SeqTrainingArguments(
