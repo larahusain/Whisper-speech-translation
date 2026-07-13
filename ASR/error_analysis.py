@@ -2,12 +2,13 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-df = pd.read_csv("pipeline_results_ar_eg.tsv", sep="\t")
+
+df = pd.read_csv("pipeline_results_az_az.tsv", sep="\t")
 
 # 2. Simple logic to categorize errors
 # Counting if there is a difference between Reference and Prediction
 def categorize_error(row):
-    asr_diff = row["1.Reference_Arabic_Audio"] != row["2.Whisper_ASR_Prediction"]
+    asr_diff = row["1.Reference_Azerbaijani_Audio"] != row["2.Whisper_ASR_Prediction"]
     mt_diff = row["3.Reference_English_Target"] != row["4.MT_English_Prediction"]
 
     if asr_diff and mt_diff:
@@ -28,7 +29,7 @@ plt.ylabel("Number of Samples")
 plt.xlabel("Error Category")
 plt.tight_layout()
 
-plt.savefig("error_analysis_chart.png")
+plt.savefig("error_analysis_chart_az.png")
 
 summary = df["Error_Type"].value_counts(normalize=True) * 100
 print("Error Summary")

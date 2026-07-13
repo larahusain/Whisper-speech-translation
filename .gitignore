@@ -228,5 +228,7 @@ __marimo__/
 *.msgpack
 
 # Ignore my specific Whisper model folders
-whisper-small-arabic-asr/
-whisper-small-arabic-asr-final/
+ASR/whisper-small-azerbaijani-asr/
+ASR/whisper-small-azerbaijani-asr-final/
+ASR/whisper-small-arabic-asr/
+ASR/whisper-small-arabic-asr-final
