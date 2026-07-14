@@ -1,7 +1,7 @@
 import argparse
 import torch
 import evaluate
-import csv
+import csv  # Added for TSV export
 from datasets import load_dataset
 from transformers import (
     pipeline,
@@ -10,9 +10,11 @@ from transformers import (
 )
 
 def main(args):
+    # Set up hardware
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"Using device: {device}")
 
+    # 1. Load ASR Model (Whisper Small - Baseline)
     print(f"Loading ASR model: {args.asr_model}")
     asr_pipeline = pipeline(
         "automatic-speech-recognition",
@@ -22,19 +24,26 @@ def main(args):
         generate_kwargs={"language": "azerbaijani"}
     )
 
+    # 2. Load MT Model (NLLB 600M)
     print(f"Loading MT model: {args.mt_model}")
     mt_tokenizer = AutoTokenizer.from_pretrained(args.mt_model, src_lang="azj_Latn")
     mt_model = AutoModelForSeq2SeqLM.from_pretrained(args.mt_model).to(device)
 
     tgt_lang_id = mt_tokenizer.convert_tokens_to_ids("eng_Latn")
 
-    # 3. Load Dataset
-    # FLEURS code for Azerbaijani is 'az_az'
+    # 3. Load Datasets (Both Azerbaijani and English)
     print(f"Loading FLEURS dataset for Azerbaijani (az_az), split: {args.split}")
-    dataset = load_dataset("google/fleurs", "az_az", split=args.split)
+    dataset_az = load_dataset("google/fleurs", "az_az", split=args.split)
+
+    print(f"Loading FLEURS dataset for English (en_us) to get translation references...")
+    dataset_en = load_dataset("google/fleurs", "en_us", split=args.split)
+
+    # Create a mapping from ID to the English transcription
+    print("Aligning English references to Azerbaijani audio...")
+    en_reference_map = {item["id"]: item["raw_transcription"] for item in dataset_en}
 
     if args.limit:
-        dataset = dataset.select(range(args.limit))
+        dataset_az = dataset_az.select(range(args.limit))
         print(f"Limiting evaluation to {args.limit} samples.")
 
     # 4. Load Metrics
@@ -46,12 +55,19 @@ def main(args):
     predictions_mt = []
     references_mt = []
 
+    # Initialize list to store results for TSV
     all_results = []
 
     print("Starting evaluation pipeline...")
-    for i, item in enumerate(dataset):
+    for i, item in enumerate(dataset_az):
         ref_audio_text = item["raw_transcription"]
-        ref_english_text = item["transcription"]
+
+        # --- THE FIX: Look up the true English reference using the utterance ID ---
+        ref_english_text = en_reference_map.get(item["id"], "")
+
+        # Skip if there's no matching English translation
+        if not ref_english_text:
+            continue
 
         # --- ASR Step ---
         audio_input = item["audio"]["array"]
@@ -82,11 +98,13 @@ def main(args):
         })
 
         if (i + 1) % 10 == 0:
-            print(f"Processed {i + 1}/{len(dataset)} samples...")
+            print(f"Processed {i + 1}/{len(dataset_az)} samples...")
 
+    # 5. Compute Metrics
     wer_score = wer_metric.compute(predictions=predictions_asr, references=references_asr)
     bleu_score = bleu_metric.compute(predictions=predictions_mt, references=[[ref] for ref in references_mt])
 
+    # 6. Output Results and Save TSV
     print("\n" + "="*40)
     print("AZERBAIJANI EVALUATION RESULTS")
     print("="*40)
@@ -94,7 +112,7 @@ def main(args):
     print(f"MT Translation Score (BLEU): {bleu_score['score']:.2f}")
     print("="*40)
 
-    with open('pipeline_results_az_az.tsv', 'w', newline='', encoding='utf-8') as f:
+    with open('pipeline_results_az_detailed.tsv', 'w', newline='', encoding='utf-8') as f:
         writer = csv.DictWriter(f, fieldnames=[
             "1.Reference_Azerbaijani_Text",
             "2.Whisper_ASR_Prediction",
@@ -103,7 +121,7 @@ def main(args):
         ], delimiter='\t')
         writer.writeheader()
         writer.writerows(all_results)
-    print("Detailed results saved to pipeline_results_az_az.tsv")
+    print("Detailed results saved to pipeline_results_az_detailed.tsv")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Evaluate Azerbaijani ASR to MT Pipeline")
