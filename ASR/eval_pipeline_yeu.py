@@ -23,7 +23,7 @@ def main(args):
         generate_kwargs={"language": "chinese"}
     )
 
-    # 2. Load MT Model (NLLB 600M) <-- This is the part that got deleted!
+    # 2. Load MT Model (NLLB 600M)
     print(f"Loading MT model: {args.mt_model}")
     mt_tokenizer = AutoTokenizer.from_pretrained(args.mt_model, src_lang="yue_Hant")
     mt_model = AutoModelForSeq2SeqLM.from_pretrained(args.mt_model).to(device)

@@ -1,0 +1,13 @@
+========================================
+AZERBAIJANI EVALUATION RESULTS
+========================================
+ASR Word Error Rate (WER):  0.5500
+MT Translation Score (BLEU): 11.27
+========================================
+
+========================================
+CANTONESE EVALUATION RESULTS
+========================================
+ASR Word Error Rate (WER):  1.0473
+MT Translation Score (BLEU): 14.68
+========================================
