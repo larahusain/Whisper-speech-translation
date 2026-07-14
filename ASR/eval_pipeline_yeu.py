@@ -23,19 +23,26 @@ def main(args):
         generate_kwargs={"language": "chinese"}
     )
 
-    # 2. Load MT Model (NLLB 600M)
+    # 2. Load MT Model (NLLB 600M) <-- This is the part that got deleted!
     print(f"Loading MT model: {args.mt_model}")
     mt_tokenizer = AutoTokenizer.from_pretrained(args.mt_model, src_lang="yue_Hant")
     mt_model = AutoModelForSeq2SeqLM.from_pretrained(args.mt_model).to(device)
 
     tgt_lang_id = mt_tokenizer.convert_tokens_to_ids("eng_Latn")
 
-    # 3. Load Dataset
+    # 3. Load Datasets (Both Cantonese and English)
     print(f"Loading FLEURS dataset for Cantonese (yue_hant_hk), split: {args.split}")
-    dataset = load_dataset("google/fleurs", "yue_hant_hk", split=args.split)
+    dataset_yue = load_dataset("google/fleurs", "yue_hant_hk", split=args.split)
+
+    print(f"Loading FLEURS dataset for English (en_us) to get translation references...")
+    dataset_en = load_dataset("google/fleurs", "en_us", split=args.split)
+
+    # Create a mapping from ID to the English transcription
+    print("Aligning English references to Cantonese audio...")
+    en_reference_map = {item["id"]: item["raw_transcription"] for item in dataset_en}
 
     if args.limit:
-        dataset = dataset.select(range(args.limit))
+        dataset_yue = dataset_yue.select(range(args.limit))
         print(f"Limiting evaluation to {args.limit} samples.")
 
     # 4. Load Metrics
@@ -51,9 +58,15 @@ def main(args):
     all_results = []
 
     print("Starting evaluation pipeline...")
-    for i, item in enumerate(dataset):
+    for i, item in enumerate(dataset_yue):
         ref_audio_text = item["raw_transcription"]
-        ref_english_text = item["transcription"]
+
+        # --- THE FIX: Look up the true English reference using the utterance ID ---
+        ref_english_text = en_reference_map.get(item["id"], "")
+
+        # Skip if there's no matching English translation
+        if not ref_english_text:
+            continue
 
         # --- ASR Step ---
         audio_input = item["audio"]["array"]
@@ -84,7 +97,7 @@ def main(args):
         })
 
         if (i + 1) % 10 == 0:
-            print(f"Processed {i + 1}/{len(dataset)} samples...")
+            print(f"Processed {i + 1}/{len(dataset_yue)} samples...")
 
     # 5. Compute Metrics
     wer_score = wer_metric.compute(predictions=predictions_asr, references=references_asr)
