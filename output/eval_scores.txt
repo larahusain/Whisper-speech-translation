@@ -1,0 +1,185 @@
+============================================================
+============================================================
+
+BEST EVAL OUTPUT
+
+============================================================
+CORPUS RESULTS: Yue 200 checkpoint【best】
+============================================================
+COMET Before : 0.5341
+COMET After  : 0.5995
+
+SacreBLEU Before : 1.68
+SacreBLEU After  : 5.32
+
+Sentence winners (COMET)
+winner_comet
+after     561
+before    258
+Name: count, dtype: int64
+
+Sentence winners (BLEU)
+winner_bleu
+after     536
+before    275
+tie         8
+Name: count, dtype: int64
+
+
+============================================================
+CORPUS RESULTS: Azerbaijani 500 checkpoint【best】
+============================================================
+COMET Before : 0.5889
+COMET After  : 0.6255
+
+SacreBLEU Before : 4.10
+SacreBLEU After  : 5.67
+
+Sentence winners (COMET)
+winner_comet
+after     576
+before    347
+Name: count, dtype: int64
+
+Sentence winners (BLEU)
+winner_bleu
+after     519
+before    395
+tie         9
+Name: count, dtype: int64
+
+
+============================================================
+============================================================
+
+ALL EVAL OUTPUT
+
+============================================================
+1. Cantonese
+
+Trained using language=chinese,
+Predicted using  language=chinese,
+
+============================================================
+CORPUS RESULTS: Yue 200 checkpoint【best】
+============================================================
+COMET Before : 0.5341
+COMET After  : 0.5995
+
+SacreBLEU Before : 1.68
+SacreBLEU After  : 5.32
+
+Sentence winners (COMET)
+winner_comet
+after     561
+before    258
+Name: count, dtype: int64
+
+Sentence winners (BLEU)
+winner_bleu
+after     536
+before    275
+tie         8
+Name: count, dtype: int64
+
+
+============================================================
+CORPUS RESULTS: Yue 500 checkpoint
+============================================================
+COMET Before : 0.5341
+COMET After  : 0.5932
+
+SacreBLEU Before : 1.68
+SacreBLEU After  : 4.95
+
+Sentence winners (COMET)
+winner_comet
+after     527
+before    292
+Name: count, dtype: int64
+
+Sentence winners (BLEU)
+winner_bleu
+after     532
+before    279
+tie         8
+Name: count, dtype: int64
+
+============================================================
+2. Azerbaijani
+
+Trained using language=turkish,
+Predicted using  language=azerbaijani,
+
+============================================================
+CORPUS RESULTS: Azerbaijani 200 checkpoint
+============================================================
+COMET Before : 0.5889
+COMET After  : 0.6249
+
+SacreBLEU Before : 4.10
+SacreBLEU After  : 5.61
+
+Sentence winners (COMET)
+winner_comet
+after     571
+before    352
+Name: count, dtype: int64
+
+Sentence winners (BLEU)
+winner_bleu
+after     534
+before    380
+tie         9
+Name: count, dtype: int64
+
+
+============================================================
+CORPUS RESULTS: Azerbaijani 500 checkpoint【best】
+============================================================
+COMET Before : 0.5889
+COMET After  : 0.6255
+
+SacreBLEU Before : 4.10
+SacreBLEU After  : 5.67
+
+Sentence winners (COMET)
+winner_comet
+after     576
+before    347
+Name: count, dtype: int64
+
+Sentence winners (BLEU)
+winner_bleu
+after     519
+before    395
+tie         9
+Name: count, dtype: int64
+
+
+
+============================================================
+CORPUS RESULTS: Azerbaijani 700 checkpoint
+============================================================
+COMET Before : 0.5889
+COMET After  : 0.6208
+
+SacreBLEU Before : 4.10
+SacreBLEU After  : 5.17
+
+Sentence winners (COMET)
+winner_comet
+after     568
+before    355
+Name: count, dtype: int64
+
+Sentence winners (BLEU)
+winner_bleu
+after     495
+before    427
+tie         1
+Name: count, dtype: int64
+
+
+
+
