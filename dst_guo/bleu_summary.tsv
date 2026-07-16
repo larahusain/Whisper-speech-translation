@@ -1,0 +1,4 @@
+language	model	bleu
+Azerbaijani_dst_finetune	Whisper-small (fine-tuned)	5.92
+Cantonese_dst_finetune	Whisper-small (fine-tuned)	5.95
+Cantonese_dst_baseline	Whisper-small (baseline)	0.97
